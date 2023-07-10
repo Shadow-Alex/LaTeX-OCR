@@ -114,7 +114,12 @@ def pad(img: Image, divable: int = 32) -> Image:
         data = (data[..., 0]).astype(np.uint8)
     else:
         data = (255-data[..., -1]).astype(np.uint8)
-    data = (data-data.min())/(data.max()-data.min())*255
+
+    if data.max() != data.min():
+        data = (data-data.min())/(data.max()-data.min())*255
+    else: # bugfix. # 生成一个全部 255 的矩阵。
+        data = np.ones_like(data) * 255
+  
     if data.mean() > threshold:
         # To invert the text to white
         gray = 255*(data < threshold).astype(np.uint8)
